@@ -1,0 +1,26 @@
+{
+  "name": "edge-blockchain",
+  "version": "1.0.0",
+  "description": "Edge Blockchain REST service interface definition",
+  "main": "index.js",
+  "scripts": {
+    "prestart": "npm install",
+    "start": "node index.js"
+  },
+  "keywords": [
+    "swagger"
+  ],
+  "license": "Unlicense",
+  "private": true,
+  "dependencies": {
+    "bluebird": "^3",
+    "connect": "^3.2.0",
+    "js-yaml": "^3.3.0",
+    "log4js": "^1.1.0",
+    "pg-promise": "^5",
+    "swagger-tools": "0.10.1",
+    "uuid": "^3.0.1",
+    "winston": "^2.3.1",
+    "express":"^4.14.1"
+  }
+}

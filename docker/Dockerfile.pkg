@@ -1,0 +1,34 @@
+#FROM registry.gear.ge.com/predix_edge/node-amd64
+#FROM node:8
+FROM mhart/alpine-node:12
+MAINTAINER Stephanie Kuhne <stephanie.kuhne@ge.com>
+
+COPY api /www/asset-demo-services/api
+COPY controllers /www/asset-demo-services/controllers
+COPY datastore /www/asset-demo-services/datastore
+COPY public /www/asset-demo-services/public
+
+COPY *.js /www/asset-demo-services/
+COPY *.json /www/asset-demo-services/
+COPY *.iml /www/asset-demo-services/
+
+WORKDIR /www/asset-demo-services
+
+RUN set -ex \
+	&& apk add --no-cache --virtual .fetch-deps \
+		bash \
+		make \
+		g++ \
+		python \
+		git 
+RUN npm rebuild	
+	# need this for alpine musl libc
+RUN ln -sf /lib/ld-musl-x86_64.so.1 /lib/ld-linux-x86-64.so.2 \
+#RUN apk add --no-cache libc6-compat \	
+	\
+	&& npm install --production \
+	\
+	# cleanup
+	&& apk del .fetch-deps
+
+CMD npm start

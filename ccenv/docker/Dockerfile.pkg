@@ -1,0 +1,20 @@
+FROM node
+MAINTAINER Stephanie Kuhne <stephanie.kuhne@ge.com>
+
+RUN set -ex \
+	&& apt-get install -y \
+		bash \
+		git
+
+RUN mkdir /www
+RUN mkdir /www/blockchain-services
+WORKDIR /www/blockchain-services
+
+COPY . /www/blockchain-services
+
+RUN npm install -g n
+RUN n 6.9.5
+
+EXPOSE 8080
+
+RUN npm run prestart

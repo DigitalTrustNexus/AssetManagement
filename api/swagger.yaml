@@ -1,0 +1,997 @@
+---
+swagger: "2.0"
+info:
+  description: "Edge Blockchain REST service interface definition"
+  version: "1.0.0"
+  title: "Edge Blockchain"
+basePath: "/"
+schemes:
+- "http"
+- "https"
+#consumes:
+#- "application/json"
+#- "text/xml"
+#produces:
+#- "application/json"
+#- "text/html"
+paths:
+  /assets/owner/{owner_id}:
+    get:
+      description: "Gets all `Asset` for asset owner.\n"
+      operationId: "assetsOwnerOwner_idGET"
+      parameters:
+      - name: "owner_id"
+        in: "path"
+        description: "the owner unique id"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Successful response"
+          schema:
+            type: "array"
+            title: "ArrayOfAsset"
+            items:
+              $ref: "#/definitions/asset"
+        400:
+          description: "Bad Request"
+        401:
+          description: "Unauthorized User"
+        405:
+          description: "Invalid Input"
+        500:
+          description: "UnknownSQLError"
+        503:
+          description: "Service Unavailable"
+      x-swagger-router-controller: "Default"
+  /assets/user/{user_id}:
+    get:
+      description: "Gets all `Asset` for asset owner.\n"
+      operationId: "assetsUserUser_idGET"
+      parameters:
+      - name: "user_id"
+        in: "path"
+        description: "the user unique id"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Successful response"
+          schema:
+            type: "array"
+            title: "ArrayOfAsset"
+            items:
+              $ref: "#/definitions/asset"
+        400:
+          description: "Bad Request"
+        401:
+          description: "Unauthorized"
+        405:
+          description: "Invalid Input"
+        500:
+          description: "UnknownSQLError"
+        503:
+          description: "Service Unavailable"
+      x-swagger-router-controller: "Default"
+  /asset/{asset_id}:
+    get:
+      description: "Get single `Asset` by asset id\n"
+      operationId: "assetAsset_idGET"
+      parameters:
+      - name: "asset_id"
+        in: "path"
+        description: "the asset id"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Successful response"
+          schema:
+            $ref: "#/definitions/asset"
+        400:
+          description: "Bad Request"
+        401:
+          description: "Unauthorized"
+        405:
+          description: "Invalid Input"
+        500:
+          description: "UnknownSQLError"
+        503:
+          description: "Service Unavailable"
+      x-swagger-router-controller: "Default"
+  /asset/create:
+    post:
+      description: "Create a single `Asset` \n"
+      operationId: "assetCreatePOST"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "asset object to be added to the database"
+        required: true
+        schema:
+          $ref: "#/definitions/asset"
+      responses:
+        201:
+          description: "Successful created an asset"
+          schema:
+            $ref: "#/definitions/asset"
+        400:
+          description: "Bad Request"
+        401:
+          description: "Unauthorized"
+        405:
+          description: "Invalid Input"
+        500:
+          description: "UnableCreateAsset"
+        503:
+          description: "Service Unavailable"
+      x-swagger-router-controller: "Default"
+  /asset/{asset_id}/image:
+    get:
+      description: "Get `assetImage` by image id\n"
+      operationId: "assetAsset_idImageGET"
+      parameters:
+      - name: "asset_id"
+        in: "path"
+        description: "the asset id"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Successful response"
+          schema:
+            $ref: "#/definitions/assetImage"
+        400:
+          description: "Bad Request"
+        401:
+          description: "Unauthorized"
+        405:
+          description: "Invalid Input"
+        500:
+          description: "UnknownSQLError"
+        503:
+          description: "Service Unavailable"
+      x-swagger-router-controller: "Default"
+    post:
+      description: "Upload or change `assetImage`\n"
+      operationId: "assetImagePOST"
+      parameters:
+      - name: "asset_id"
+        in: "path"
+        description: "the asset id"
+        required: true
+        type: "string"
+      - name: "body"
+        in: "formData"
+        description: "the image"
+        required: true
+        type: "file"
+      responses:
+        201:
+          description: "Successful upload the image"
+          schema:
+            $ref: "#/definitions/assetImage"
+        400:
+          description: "Bad Request"
+        401:
+          description: "Unauthorized"
+        405:
+          description: "Invalid Input"
+        500:
+          description: "UnableUploadImage"
+        503:
+          description: "Service Unavailable"
+      x-swagger-router-controller: "Default"
+  /asset/{asset_id}/state:
+    get:
+      description: "Get `asset` `state` by asset id\n"
+      operationId: "assetAsset_idStateGET"
+      parameters:
+      - name: "asset_id"
+        in: "path"
+        description: "the asset id"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Successful response"
+          schema:
+            $ref: "#/definitions/state"
+        400:
+          description: "Bad Request"
+        401:
+          description: "Unauthorized"
+        405:
+          description: "Invalid Input"
+        500:
+          description: "UnknownSQLError"
+        503:
+          description: "Service Unavailable"
+      x-swagger-router-controller: "Default"
+  /asset/{asset_id}/transferFunds/{amount}/receivingAddress/{address}:
+    post:
+      description: |
+        Deposit funds of `amount` from `asset_id` wallet to receiving `address`.
+      operationId: assetAsset_idTransferFundsAmountReceivingAddressPOST
+      parameters:
+        - name: asset_id
+          in: path
+          description: "the asset unique id"
+          required: true
+          type: string
+        - name: amount
+          in: path
+          description: "quanity for funds to transfer"
+          required: true
+          type: string
+        - name: address
+          in: path
+          description: "`address` that will receive the funds"
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: array
+            title: ArrayOfTransactions
+            items:
+              $ref: '#/definitions/paymentTransaction'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '405':
+          description: Invalid Input
+        '500':
+          description: BlockchainServiceError
+        '503':
+          description: Service Unavailable
+      x-swagger-router-controller: Default
+  /assets/allStates:
+    get:
+      description: "Get all available states\n"
+      operationId: "assetsAllStatesGET"
+      parameters: []
+      responses:
+        200:
+          description: "Successful response"
+          schema:
+            type: "array"
+            items:
+              type: "string"
+              title: "available_state"
+        400:
+          description: "Bad Request"
+        401:
+          description: "Unauthorized"
+        405:
+          description: "Invalid Input"
+        500:
+          description: "BlockchainServiceError"
+        503:
+          description: "Service Unavailable"
+      x-swagger-router-controller: "Default"
+  /event:
+    post:
+      description: "Post an `asset` `event`\n"
+      operationId: "eventPOST"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "the event object"
+        required: true
+        schema:
+          $ref: "#/definitions/event"
+      responses:
+        201:
+          description: "Successful post an event"
+          schema:
+            $ref: "#/definitions/event"
+        400:
+          description: "Bad Request"
+        401:
+          description: "Unauthorized"
+        405:
+          description: "Invalid Input"
+        500:
+          description: "UnableCreateEvent"
+        503:
+          description: "Service Unavailable"
+      x-swagger-router-controller: "Default"
+  /event/{event_id}:
+    get:
+      description: "Get a signle `event` by event id\n"
+      operationId: "eventEvent_idGET"
+      parameters:
+      - name: "event_id"
+        in: "path"
+        description: "the event id"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Successful response"
+          schema:
+            $ref: "#/definitions/event"
+        400:
+          description: "Bad Request"
+        401:
+          description: "Unauthorized"
+        405:
+          description: "Invalid Input"
+        500:
+          description: "BlockchainServiceError"
+        503:
+          description: "Service Unavailable"
+      x-swagger-router-controller: "Default"
+  /events/allAvailableEvents:
+    get:
+      description: "Get a signle `event` by event id\n"
+      operationId: "eventsAllAvailableEventsGET"
+      parameters: []
+      responses:
+        200:
+          description: "Successful response"
+          schema:
+            type: "array"
+            items:
+              type: "string"
+              title: "available_event"
+        400:
+          description: "Bad Request"
+        401:
+          description: "Unauthorized"
+        405:
+          description: "Invalid Input"
+        500:
+          description: "BlockchainServiceError"
+        503:
+          description: "Service Unavailable"
+      x-swagger-router-controller: "Default"
+  /events/{person_id}:
+    get:
+      description: "Get all `asset` for a specific person\n"
+      operationId: "eventsPerson_idGET"
+      parameters:
+      - name: "person_id"
+        in: "path"
+        description: "the person id"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Successful response"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/event"
+        400:
+          description: "Bad Request"
+        401:
+          description: "Unauthorized"
+        405:
+          description: "Invalid Input"
+        500:
+          description: "BlockchainServiceError"
+        503:
+          description: "Service Unavailable"
+      x-swagger-router-controller: "Default"
+  /events/asset/{asset_id}:
+    get:
+      description: "Get all `asset` for a specific person\n"
+      operationId: "eventsAsset_idGET"
+      parameters:
+      - name: "asset_id"
+        in: "path"
+        description: "the person id"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Successful response"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/event"
+        400:
+          description: "Bad Request"
+        401:
+          description: "Unauthorized"
+        405:
+          description: "Invalid Input"
+        500:
+          description: "BlockchainServiceError"
+        503:
+          description: "Service Unavailable"
+      x-swagger-router-controller: "Default"
+  /events/user/asset/{asset_id}:
+    get:
+      description: "Get all `asset` for a specific person\n"
+      operationId: "eventsUserAsset_idGET"
+      parameters:
+      - name: "asset_id"
+        in: "path"
+        description: "the person id"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Successful response"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/event"
+        400:
+          description: "Bad Request"
+        401:
+          description: "Unauthorized"
+        405:
+          description: "Invalid Input"
+        500:
+          description: "BlockchainServiceError"
+        503:
+          description: "Service Unavailable"
+      x-swagger-router-controller: "Default"
+  /users/{owner_id}:
+    get:
+      description: "Gets all `user` by the owner id.\n"
+      operationId: "usersOwner_idGET"
+      parameters:
+      - name: "owner_id"
+        in: "path"
+        description: "the owner unique id"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Successful response"
+          schema:
+            type: "array"
+            title: "ArrayOfuser"
+            items:
+              $ref: "#/definitions/person"
+        400:
+          description: "Bad Request"
+        401:
+          description: "Unauthorized"
+        405:
+          description: "Invalid Input"
+        500:
+          description: "BlockchainServiceError"
+        503:
+          description: "Service Unavailable"
+      x-swagger-router-controller: "Default"
+    post:
+      description: "Create a new `user` using owner as admin.\n"
+      operationId: "usersOwner_idPOST"
+      parameters:
+      - name: "owner_id"
+        in: "path"
+        description: "the owner unique id"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "the event object"
+        required: true
+        schema:
+          $ref: "#/definitions/personParameter"
+      responses:
+        200:
+          description: "Successful response"
+          schema:
+            type: "object"
+            title: "CreatedUser"
+            items:
+              $ref: "#/definitions/person"
+        400:
+          description: "Bad Request"
+        401:
+          description: "Unauthorized"
+        405:
+          description: "Invalid Input"
+        500:
+          description: "BlockchainServiceError"
+        503:
+          description: "Service Unavailable"
+      x-swagger-router-controller: "Default"
+  '/users/{user_id}/depositFunds/{amount}/wallet/{asset_id}':
+    post:
+      description: |
+        Deposit funds of `amount` from `user_id` wallet to `asset_id` wallet.
+      operationId: usersOwner_idDepositAsset_idPOST
+      parameters:
+        - name: user_id
+          in: path
+          description: the owner unique id
+          required: true
+          type: string
+        - name: asset_id
+          in: path
+          description: the owner unique id
+          required: true
+          type: string
+        - name: amount
+          in: path
+          description: the owner unique id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            type: array
+            title: ArrayOfTransactions
+            items:
+              $ref: '#/definitions/paymentTransaction'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '405':
+          description: Invalid Input
+        '500':
+          description: BlockchainServiceError
+        '503':
+          description: Service Unavailable
+      x-swagger-router-controller: Default
+  /person/{person_id}:
+    get:
+      description: "Gets the `person` by person id\n"
+      operationId: "personPerson_idGET"
+      parameters:
+      - name: "person_id"
+        in: "path"
+        description: "the user unique id"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Successful response"
+          schema:
+            $ref: "#/definitions/person"
+        400:
+          description: "Bad Request"
+        401:
+          description: "Unauthorized"
+        405:
+          description: "Invalid Input"
+        500:
+          description: "BlockchainServiceError"
+        503:
+          description: "Service Unavailable"
+      x-swagger-router-controller: "Default"
+  /person/:
+    post:
+      description: "Posts, a.k.a. create a new person in db\n"
+      operationId: "personPOST"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "the person object"
+          required: true
+          schema:
+            $ref: "#/definitions/person"
+      responses:
+        200:
+          description: "Successful response"
+        400:
+          description: "Bad Request"
+        401:
+          description: "Unauthorized"
+        405:
+          description: "Invalid Input"
+        500:
+          description: "BlockchainServiceError"
+        503:
+          description: "Service Unavailable"
+      x-swagger-router-controller: "Default"
+  /assets/allAvailableAssets:
+    get:
+      description: "Get all available assets"
+      operationId: "assetsAllAvailableAssetsGET"
+      parameters: []
+      responses:
+        200:
+          description: "Successful response"
+          schema:
+            type: "array"
+            items:
+              type: "string"
+              title: "available_assets"
+        400:
+          description: "Bad Request"
+        401:
+          description: "Unauthorized"
+        405:
+          description: "Invalid Input"
+        500:
+          description: "Datastore Error"
+        503:
+          description: "Service Unavailable"
+      x-swagger-router-controller: "Default"
+  /person/allAvailablePersons:
+    get:
+      description: "Get all available users and owners"
+      operationId: "personsAllAvailablePersonsGET"
+      parameters: []
+      responses:
+        200:
+          description: "Successful response"
+          schema:
+            type: "array"
+            items:
+              type: "string"
+              title: "available_persons"
+        400:
+          description: "Bad Request"
+        401:
+          description: "Unauthorized"
+        405:
+          description: "Invalid Input"
+        500:
+          description: "Datastore Error"
+        503:
+          description: "Service Unavailable"
+      x-swagger-router-controller: "Default"
+  /queue/addElement:
+    post:
+      description: "Post a printing task to queue"
+      operationId: "eventsUserQueueElementPOST"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "the queue object"
+          required: true
+          schema:
+            $ref: "#/definitions/queueElement"
+      responses:
+        200:
+          description: "Successful response"
+        400:
+          description: "Bad Request"
+        401:
+          description: "Unauthorized"
+        405:
+          description: "Invalid Input"
+        500:
+          description: "BlockchainServiceError"
+        503:
+          description: "Service Unavailable"
+      x-swagger-router-controller: "Default"
+  /asset/marketplace:
+    post:
+      description: "An asset join market place"
+      operationId: "eventsAssetMarketplacePOST"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "the asset market object"
+          required: true
+          schema:
+            $ref: "#/definitions/assetMarket"
+      responses:
+        200:
+          description: "Successful response"
+        400:
+          description: "Bad Request"
+        401:
+          description: "Unauthorized"
+        405:
+          description: "Invalid Input"
+        500:
+          description: "BlockchainServiceError"
+        503:
+          description: "Service Unavailable"
+      x-swagger-router-controller: "Default"
+  /marketProductItems:
+    get:
+      description: "Get all the items from market place"
+      operationId: "marketProductItemsGET"
+      parameters: []
+      responses:
+        200:
+          description: "Successful response"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/marketProductItem"
+        400:
+          description: "Bad Request"
+        401:
+          description: "Unauthorized"
+        405:
+          description: "Invalid Input"
+        500:
+          description: "Datastore Error"
+        503:
+          description: "Service Unavailable"
+      x-swagger-router-controller: "Default"
+  /queue/allElements:
+    get:
+      description: "Gets the whole queue table"
+      operationId: "allQueueElementsGET"
+      parameters: []
+      responses:
+        200:
+          description: "Successful response"
+          schema:
+            type: "array"
+            items:
+              type: "string"
+              title: "all_queueElements"
+        400:
+          description: "Bad Request"
+        401:
+          description: "Unauthorized"
+        405:
+          description: "Invalid Input"
+        500:
+          description: "Datastore Error"
+        503:
+          description: "Service Unavailable"
+      x-swagger-router-controller: "Default"
+  /queue/availableElements:
+    get:
+      description: "Gets unfinished jobs from the queue table"
+      operationId: "availableQueueElementsGET"
+      parameters: []
+      responses:
+        200:
+          description: "Successful response"
+          schema:
+            type: "array"
+            items:
+              type: "string"
+              title: "available_queueElements"
+        400:
+          description: "Bad Request"
+        401:
+          description: "Unauthorized"
+        405:
+          description: "Invalid Input"
+        500:
+          description: "Datastore Error"
+        503:
+          description: "Service Unavailable"
+      x-swagger-router-controller: "Default"
+  /queue/asset/{asset_id}/changeElementStatus/{element_id}:
+    post:
+      description: "change queue element status"
+      operationId: "queueAssetChangeElementStatusPOST"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "the queue element status object"
+          required: true
+          schema:
+            $ref: "#/definitions/queueElementStatus"
+        - name: "asset_id"
+          in: "path"
+          description: "the asset unique id"
+          required: true
+          type: "string"
+        - name: "element_id"
+          in: "path"
+          description: "the queue element unique id"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "Successful response"
+        400:
+          description: "Bad Request"
+        401:
+          description: "Unauthorized"
+        405:
+          description: "Invalid Input"
+        500:
+          description: "BlockchainServiceError"
+        503:
+          description: "Service Unavailable"
+      x-swagger-router-controller: "Default"
+  /queue/asset/elementStatus/{asset_id}:
+    get:
+      description: "Gets that status of the current action being completed by the asset"
+      operationId: "queueElementStatusAsset_idGET"
+      parameters:
+      - name: "asset_id"
+        in: "path"
+        description: "the asset unique id"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Successful response"
+          schema:
+            $ref: "#/definitions/queueElementStatus"
+        400:
+          description: "Bad Request"
+        401:
+          description: "Unauthorized"
+        405:
+          description: "Invalid Input"
+        500:
+          description: "BlockchainServiceError"
+        503:
+          description: "Service Unavailable"
+      x-swagger-router-controller: "Default" 
+
+definitions:
+  personParameter:
+    type: "object"
+    properties:
+      userName:
+        type: "string"
+        format: "dateTime"
+      firstName:
+        type: "string"
+      lastName:
+        type: "string"
+      email:
+        type: "string"
+      companyName:
+        type: "string"
+  person:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+      userName:
+        type: "string"
+      created_at:
+        type: "string"
+        format: "dateTime"
+      firstName:
+        type: "string"
+      lastName:
+        type: "string"
+      email:
+        type: "string"
+      companyName:
+        type: "string"
+      walletAddress:
+        type: "string"
+      coinsRemaining:
+        type: "string"
+  asset:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+      assetUUID:
+        type: "string"
+      assetName:
+        type: "string"
+      owner_id:
+        type: "string"
+      user_id:
+        type: "string"
+      created_at:
+        type: "string"
+        format: "dateTime"
+      description:
+        type: "string"
+      walletAddress: 
+        type: "string"
+      coinsRemaining:
+        type: "string"
+      tokensRemaining:
+        type: "string"
+  state:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+      asset_id:
+        type: "string"
+      person_id:
+        type: "string"
+      state_type:
+        type: "string"
+        enum:
+        - "exists"
+        - "activated"
+        - "deactivated"
+        - "on"
+        - "off"
+        - "maintaining"
+  event:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+      eventType:
+        type: "string"
+        enum:
+        - "initialize"
+        - "activate"
+        - "deactivate"
+        - "turn on"
+        - "turn off"
+        - "maintain"
+      person_id:
+        type: "string"
+      asset_id:
+        type: "string"
+      created_at:
+        type: "string"
+        format: "dateTime"
+      eventInfo:
+        type: "object"
+        properties: {}
+  assetImage:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+      assetId:
+        type: "string"
+      url:
+        type: "string"
+  queueElement:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+      price:
+        type: "string"
+      sku:
+        type: "string"
+  queueElementStatus:
+    type: "object"
+    properties:
+      status:
+        type: "string"
+      percentComplete:
+        type: integer
+  assetMarket:
+    type: "object"
+    properties:
+      assetID:
+        type: "string"
+      credentialID:
+        type: "string"
+      marketplaceName:
+        type: "string"
+  marketProductItem:
+    type: "object"
+    properties:
+      id:
+        type: integer
+      sku:
+        type: "string"
+      name:
+        type: "string"
+      attribute_set_id:
+        type: "integer"
+      price:
+        type: "integer"
+      status:
+        type: "integer"
+      visibility:
+        type: "integer"
+      type_id:
+        type: "string"
+      create_at:
+        type: "string"
+      updated_at:
+        type: "string"
+      weight:
+        type: "integer"
+      extension_attributes:
+        type: "object"
+      product_links":
+        type: "object"
+      tier_prices:
+        type: "object"
+      custom_attributes:
+        type: "object"
+  paymentTransaction:
+    type: object
+    properties:
+      id:
+        type: string
+      txid:
+        type: string

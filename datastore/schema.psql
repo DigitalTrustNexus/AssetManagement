@@ -1,0 +1,136 @@
+-- Drop contents
+-- drop table asset_images;
+-- drop table assets;
+-- drop table users;
+-- drop table events;
+-- drop table queue;
+
+-- drop SEQUENCE user_id_seq;
+-- drop SEQUENCE assets_id_seq;
+-- drop SEQUENCE asset_image_id_seq;
+-- drop SEQUENCE event_id_seq;
+
+-- Create sequences for the table ids
+CREATE SEQUENCE user_id_seq START 1;
+CREATE SEQUENCE assets_id_seq START 1;
+CREATE SEQUENCE asset_image_id_seq START 1;
+CREATE SEQUENCE event_id_seq START 1;
+CREATE SEQUENCE credential_id_seq START 1;
+CREATE SEQUENCE queue_id_seq START 1;
+CREATE SEQUENCE asset_credential_id_seq START 1;
+
+
+-- Table: public.users
+-- DROP TABLE public.users;
+CREATE TABLE public.users
+(
+  id integer NOT NULL DEFAULT nextval('user_id_seq'::regclass),
+  userName varchar(30) NOT NULL,
+  firstName varchar(30) NOT NULL,
+  lastName varchar(30) NOT NULL,
+  email varchar(30),
+  companyName varchar(30),
+  created_at date NOT NULL,
+  wallet varchar(100),
+  CONSTRAINT "organizationId" PRIMARY KEY (id)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE public.users
+  OWNER TO blockchain;
+
+-- Table: public.assets
+-- DROP TABLE public.assets;
+
+CREATE TABLE public.assets
+(
+  id integer NOT NULL DEFAULT nextval('assets_id_seq'::regclass),
+  asset_uuid UUID NOT NULL,
+  assetName varchar(30) NOT NULL,
+  created_at date,
+  description text,
+  owner_id integer references users(id),
+  user_id integer references users(id),
+  wallet varchar(100),
+  CONSTRAINT "assetId" PRIMARY KEY (id)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE public.assets
+  OWNER TO blockchain;
+
+-- Table: public.asset_images
+-- DROP TABLE public.asset_images;
+
+CREATE TABLE public.asset_images
+(
+  id integer NOT NULL DEFAULT nextval('asset_image_id_seq'::regclass),
+  asset_id integer references assets(id),
+  image_url text, -- asset image's url
+  CONSTRAINT imagekey PRIMARY KEY (id)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE public.asset_images
+  OWNER TO blockchain;
+
+-- Table: public.events
+-- DROP TABLE public.events;
+
+CREATE TABLE public.events
+(
+  id integer NOT NULL DEFAULT nextval('event_id_seq'::regclass),
+  asset_id integer references assets(id),
+  user_id integer references users(id),
+  eventType varchar(10),
+  eventParameter text,
+  created_at date
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE public.events
+  OWNER TO blockchain;
+
+
+CREATE TABLE public.marketCredential
+(
+  id integer NOT NULL DEFAULT nextval('credential_id_seq'::regclass),
+  customerID integer,
+  securityToken varchar(100)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE public.marketCredential
+  OWNER TO blockchain;
+
+CREATE TABLE public.assetCredential
+(
+  id integer NOT NULL DEFAULT nextval('asset_credential_id_seq'::regclass),
+  assetID integer,
+  credentialID integer,
+  marketPlace varchar(20)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE public.marketCredential
+  OWNER TO blockchain;
+
+-- Table: public.queue
+-- DROP TABLE public.queue;
+
+CREATE TABLE public.queue
+(
+  priorityNum integer NOT NULL DEFAULT nextval('queue_id_seq'::regclass),
+  name varchar(30),
+  assetID integer,
+  status varchar(200),
+  percentComplete integer,
+  sku varchar(100),
+  price decimal
+)
