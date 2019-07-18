@@ -15,9 +15,6 @@
 # The binary to build (just the basename).
 NAME := blockchain-services-build
 
-# Where to push the docker image.
-# REGISTRY ?= registry.gear.ge.com/blockchain
-
 # This version-strategy uses git tags to set the version string
 #VERSION := $(shell git describe --tags --always --dirty)
 VERSION := 0.1
@@ -35,14 +32,13 @@ VERSION := 0.1
 DOCKER_USER := $(shell if [[ "$$OSTYPE" != "darwin"* ]]; then USER_ARG="--user=`id -u`"; fi; echo "$$USER_ARG")
 PROXY_ARGS := -e http_proxy=$(http_proxy) -e https_proxy=$(https_proxy) -e no_proxy=$(no_proxy)
 
-#IMAGE := $(REGISTRY)/$(NAME)
 
 
 # Default target
 all: serve
 
 ${NAME}-builder.created:
-	@echo "creating builder image ... "
+	@echo "From make process: creating builder image ... "
 	@docker build                                                          \
 		-t $(NAME):builder                                                 \
 		-f docker/Dockerfile.build                                         \
@@ -51,7 +47,7 @@ ${NAME}-builder.created:
 	touch ${NAME}-builder.created
 
 serve: ${NAME}-builder.created
-	@echo "launching server container ... "
+	@echo "From make process: launching server container ... "
 	@echo $(DOCKER_USER)
 	@docker run                                                           \
 		--rm                                                              \
@@ -84,7 +80,7 @@ serve: ${NAME}-builder.created
 		"
 
 build-shell: ${NAME}-builder.created
-	@echo "Entering build shell ... "
+	@echo "From make process: entering build shell ... "
 	@echo $(DOCKER_USER)
 	@docker run                                                           \
 		--rm                                                              \
@@ -114,7 +110,7 @@ build-shell: ${NAME}-builder.created
 		/bin/bash
 
 image:
-	@echo "packaging runtime image ... "
+	@echo "From make process: packaging runtime image ... "
 	@docker build                                                         \
 		-t $(NAME):$(VERSION)                                             \
 		-f docker/Dockerfile.pkg                                          \
@@ -122,6 +118,7 @@ image:
 		.
 
 clean:
+	@echo "From make process: Clean docker process and images."
 	@if [ $(shell docker ps -a | grep $(NAME) | wc -l) != 0 ]; then \
 		docker ps -a | grep $(NAME) | awk '{print $$1 }' | xargs docker rm -f; \
 	fi

@@ -1,11 +1,10 @@
-#FROM registry.gear.ge.com/predix_edge/node-amd64
 #FROM node:8
 FROM mhart/alpine-node:12
-MAINTAINER Stephanie Kuhne <stephanie.kuhne@ge.com>
+#MAINTAINER Stephanie Kuhne <stephanie.kuhne@ge.com>
 
 COPY api /www/asset-demo-services/api
 COPY controllers /www/asset-demo-services/controllers
-COPY datastore /www/asset-demo-services/datastore
+#COPY datastore /www/asset-demo-services/datastore
 COPY public /www/asset-demo-services/public
 
 COPY *.js /www/asset-demo-services/
