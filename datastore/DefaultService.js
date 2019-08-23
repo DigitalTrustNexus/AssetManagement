@@ -3,14 +3,18 @@
 var log4js = require('log4js');
 var logger = log4js.getLogger('DEPLOY');
 const uuidV4 = require('uuid/v4');
-const bitcoinClient = require('bitcoin-core');
-const userWalletLocation = process.env.userIP;
+//const bitcoinClient = require('bitcoin-core');
+//const userWalletLocation = process.env.userIP;
 const asset1WalletLocation = process.env.asset1;
 const asset2WalletLocation = process.env.asset2;
 //const walletUserName="elab";
 //const walletPassword="Acc3ssGr@nted";
-const walletUserName="Yang";
-const walletPassword="bitpayGE2019";
+//const walletUserName="Yang";
+//const walletPassword="bitpayGE2019";
+const walletPassword="Acc3ssGr@nted";
+const walletUserName="Ulysseys";
+const walletPort="18332";
+const walletHost="127.0.0.1";
 
 // Handle file storage
 var fileHandle = require('fs');
@@ -33,7 +37,8 @@ var options = {
 
 var pgp = require('pg-promise')(options);
 //TODO: password need to be managed.
-var url = 'blockchain-datastore-build-complete';
+//var url = 'blockchain-datastore-build-complete';
+var url='127.0.0.1';
 //var url = 'localhost';
 var port = '5432';
 //console.log('connectionStringVar = ' + connectionStringVar);
@@ -45,14 +50,14 @@ var db = pgp(connectionString);
 var log4js = require('log4js');
 var logger = log4js.getLogger('INVOKE');
 
-var hfc = require('fabric-client');
-var utils = require('fabric-client/lib/utils.js');
-var Peer = require('fabric-client/lib/Peer.js');
-var Orderer = require('fabric-client/lib/Orderer.js');
-var EventHub = require('fabric-client/lib/EventHub.js');
+//var hfc = require('fabric-client');
+//var utils = require('fabric-client/lib/utils.js');
+//var Peer = require('fabric-client/lib/Peer.js');
+//var Orderer = require('fabric-client/lib/Orderer.js');
+//var EventHub = require('fabric-client/lib/EventHub.js');
 
 var config = require('../config.json');
-var helper = require('../helper.js');
+//var helper = require('../helper.js');
 
 logger.setLevel('DEBUG');
 
@@ -196,11 +201,12 @@ exports.assetAsset_idStateGET = function (args, res, next) {
                 return uuid;
             }
         )
+/*
         .then(function (uuid) {
             // Get status from hyperledger
             logger.info("client = new hfc()");
-            client = new hfc();
-            init();
+            //client = new hfc();
+            //init();
 
             hfc.newDefaultKeyValueStore({
                 path: config.keyValueStore
@@ -233,7 +239,8 @@ exports.assetAsset_idStateGET = function (args, res, next) {
                     logger.info('Right before query');
                     return chain.queryByChaincode(request);
                 }
-            ).then(
+            )
+	.then(
                 function (response_payloads) {
                     for (let i = 0; i < response_payloads.length; i++) {
                         logger.info('############### Query results ', response_payloads[i].toString('utf8'));
@@ -247,9 +254,10 @@ exports.assetAsset_idStateGET = function (args, res, next) {
                 }
             );
         })
+*/
 }
 
-
+/*
 exports.assetAsset_idTransferFundsAmountReceivingAddressPOST = function (args, res, next) {
     var assetID = parseInt(args.asset_id.value);
     var amount = args.amount.value;
@@ -262,7 +270,7 @@ exports.assetAsset_idTransferFundsAmountReceivingAddressPOST = function (args, r
     .then(function (data) {
 	    const assetWallet = data[Object.keys(data)[0]].assetwallet;  // get location of asset's wallet
 //	    const assetClient = new bitcoinClient({ username: walletUserName, password: walletPassword, host: assetWallet });
-	    const assetClient = new bitcoinClient({ username: walletUserName, password: walletPassword, host:'127.0.0.1', network:'testnet' });
+	    const assetClient = new bitcoinClient({ username: walletUserName, password: walletPassword, host:'127.0.0.1', network:'testnet', port:walletPort });
 
 	    assetClient.sendToAddress(receivingAddress, amount, comment, comment2, function(err, txid) {
 		    if (err) {
@@ -274,6 +282,7 @@ exports.assetAsset_idTransferFundsAmountReceivingAddressPOST = function (args, r
 	    });
     });
 }
+*/
 
 exports.assetAsset_idGET = function (args, res, next) {
     /**
@@ -292,18 +301,17 @@ exports.assetAsset_idGET = function (args, res, next) {
 //   "id" : "aeiou"
 // };
     var assetID = parseInt(args.asset_id.value);
-    var queryString = 'select a.id id, a.asset_uuid assetUUID, a.assetName assetName, u.firstName userFirstName, u.lastName userLastName, o.firstName ownerFirstName,' +
-        'o.lastName ownerLastName, a.created_at created_at, a.description description, a.wallet walletAddress ' +
-        'from assets a, users u, users o where a.id = $1 and a.owner_id = o.id and a.user_id = u.id';
+    var queryString = 'select a.id id, a.uuid assetUUID, a.assetName assetName, u.firstName userFirstName, u.lastName userLastName, u.firstName ownerFirstName,  u.lastName ownerLastName, a.created_at created_at, a.am_description description, a.location_description locationDescription, a.dimension1 d1, a.dimension2 d2, a.dimension3 d3, a.location loc from assets a, users u where a.id = $1 and a.owner_id = u.id';
     console.log('From assetAsset_idGET.  queryString: ' + queryString);
     db.any(queryString, assetID)
         .then(function (data) {
 
-		const assetWallet = data[Object.keys(data)[0]].walletaddress;  // get location of asset's wallet      
+		//const assetWallet = data[Object.keys(data)[0]].walletaddress;  // get location of asset's wallet      
 		//const Client = new bitcoinClient({ username: walletUserName, password: walletPassword, host: assetWallet });
-		const Client = new bitcoinClient({ username: walletUserName, password: walletPassword, host: '127.0.0.1', network:'testnet'});
-		console.log("From assetAsset_idGET. username:" + walletUserName + ";password:" + walletPassword + ";host:" + "127.0.0.1");
-		Client.getBalance(function(err, balance) {
+		//const Client = new bitcoinClient({ username: walletUserName, password: walletPassword, host: walletHost, network:'testnet',port:walletPort});
+		//console.log("From assetAsset_idGET. username:" + walletUserName + ";password:" + walletPassword + ";host:" + "127.0.0.1");
+        /*
+        Client.getBalance(function(err, balance) {
 			if (err) {
 			    return console.error(err);
 			}
@@ -315,10 +323,11 @@ exports.assetAsset_idGET = function (args, res, next) {
 
 			res.setHeader('Content-Type', 'application/json');
 			res.end(JSON.stringify(data[Object.keys(data)[0]] || {}, null, 2));
-		    });
+            });
+            */
 
-		//            res.setHeader('Content-Type', 'application/json');
-		//res.end(JSON.stringify(data[Object.keys(data)[0]] || {}, null, 2));
+		res.setHeader('Content-Type', 'application/json');
+		res.end(JSON.stringify(data[Object.keys(data)[0]] || {}, null, 2));
         })
         .catch(function (err) {
             return next(err);
@@ -501,10 +510,14 @@ exports.personPerson_idGET = function (args, res, next) {
 	    console.error(Object.keys(data));
             console.error(Object.keys(data)[0]);
             console.error(data[Object.keys(data)[0]].wallet);
-            const assetWallet = data[Object.keys(data)[0]].wallet;  // get location of user's wallet      
+            const assetWallet = data[Object.keys(data)[0]].wallet;  // get location of user's wallet     
+            
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify(data[Object.keys(data)[0]] || {}, null, 2));
+        /*
 
 	    //const host = JSON.stringify(data[Object.keys(data)[8]]);  // select from user or assert and get wallet string
-	    const Client = new bitcoinClient({ username: walletUserName, password: walletPassword, host: assetWallet });
+	    const Client = new bitcoinClient({ username: walletUserName, password: walletPassword, host: assetWallet,port:walletPort});
 
 	    Client.getBalance(function(err, balance) {
 		    if (err) {
@@ -518,7 +531,7 @@ exports.personPerson_idGET = function (args, res, next) {
 
 		    res.setHeader('Content-Type', 'application/json');
 		    res.end(JSON.stringify(data[Object.keys(data)[0]] || {}, null, 2));
-	    });
+	    }); */
         })
         .catch(function (err) {
             return next(err);
@@ -628,7 +641,7 @@ exports.usersOwner_idPOST = function (args, res, next) {
             return next(err);
         });
 }
-
+/*
 exports.usersOwner_idDepositAsset_idPOST  = function (args, res, next) {
     ////here
     //get asset's wallet
@@ -637,7 +650,7 @@ exports.usersOwner_idDepositAsset_idPOST  = function (args, res, next) {
     .then(function (data) {
 	    //	    const host = JSON.stringify(data[Object.keys(data)[10]]);
 	    const userWallet = data[Object.keys(data)[0]].userwallet;  // get location of user's wallet
-	    const userClient = new bitcoinClient({ username: walletUserName, password: walletPassword, host: userWallet });	
+	    const userClient = new bitcoinClient({ username: walletUserName, password: walletPassword, host: userWallet, port:walletPort});	
 
 	    const assetWallet = data[Object.keys(data)[0]].assetwallet;  // get location of asset's wallet
 	    const assetClient = new bitcoinClient({ username: walletUserName, password: walletPassword, host: assetWallet });
@@ -671,6 +684,7 @@ exports.usersOwner_idDepositAsset_idPOST  = function (args, res, next) {
     });
 
 }
+*/
 
 exports.assetImagePOST = function (args, res, next) {
     /**
@@ -756,7 +770,9 @@ exports.personsAllAvailablePersonsGET = function (args, res, next) {
 }
 
 function invoke(args) {
+	logger.info("Enter invoke");
 
+/*
     logger.info("client = new hfc()");
     client = new hfc();
     init();
@@ -833,6 +849,7 @@ function invoke(args) {
         }
     );
     //return message;
+*/
 }
 
 
@@ -1138,12 +1155,19 @@ exports.eventsUserAsset_idGET = function (args, res, next) {
 
 exports.eventsUserQueueElementPOST = function(args, res, next) {
     var name = args.body.originalValue.name;
-    var price = parseFloat(args.body.originalValue.price);
-    var sku = args.body.originalValue.sku;
-    var status = 'Available';
+    var assetid = args.body.originalValue.assetid;
+    var status = 'Queued';
     var percentComplete = 0;
-    db.any('insert into queue(name,price,sku,status,percentComplete)' +
-        'values($1,$2,$3,$4,$5); SELECT currval(\'queue_id_seq\') id;', [name, price, sku, status, 0.0])
+    var sku = args.body.originalValue.sku;
+    var price = parseFloat(args.body.originalValue.price);
+    var dimension1 = parseFloat(args.body.originalValue.dimension1);
+    var dimension2 = parseFloat(args.body.originalValue.dimension2);
+    var dimension3 = parseFloat(args.body.originalValue.dimension3);
+    var ordernumber = args.body.originalValue.ordernumber;
+    var location = args.body.originalValue.location;
+    
+    db.any('insert into queue(id, name, assetid, status, percentcomplete, sku, price, dimension1, dimension2, dimension3, ordernumber, location)' +
+        'values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11); SELECT currval(\'queue_id_seq\') id;', [name, assetid, status, percentComplete, sku, price, dimension1,dimension2, dimension3, ordernumber, location])
         .then(function (data) {
             //ToDo should this method return anything?
             res.setHeader('Content-Type', 'application/json');
@@ -1272,8 +1296,7 @@ req2.end();
 }
 
 exports.allQueueElementsGET = function (args, res, next) {
-
-    var queryString = 'select * from queue order by queue.priorityNum';
+    var queryString = 'select * from queue order by queue.id';
     db.any(queryString)
         .then(function (data) {
             res.setHeader('Content-Type', 'application/json');
@@ -1291,8 +1314,24 @@ exports.allQueueElementsGET = function (args, res, next) {
 }
 
 exports.availableQueueElementsGET = function (args, res, next) {
+/*
+    var location = args.body.originalValue.location;
+    var dimension1 = args.body.originalValue.dimension1;
+    var dimension2 = args.body.originalValue.dimension2;
+    var dimension3 = args.body.originalValue.dimension3;
+*/
 
-    var queryString = 'select * from queue where queue.percentComplete = 0 order by queue.priorityNum';
+    var location = args.location.value;
+    var dimension1 = parseInt(args.dimension1.value);
+    var dimension2 = parseInt(args.dimension2.value);
+    var dimension3 = parseInt(args.dimension3.value);
+
+    var queryString = 'select * from queue where queue.percentComplete = 0 and' +
+        ' location = \'' + location + '\' and dimension1 <= ' + dimension1 +
+        ' and dimension2 <= ' + dimension2 +
+        ' and dimension3 <= ' + dimension3 + ' order by queue.id';
+    console.log("queryString:   " + queryString);
+
     db.any(queryString)
         .then(function (data) {
             res.setHeader('Content-Type', 'application/json');
@@ -1314,7 +1353,7 @@ exports.queueAssetChangeElementStatusPOST = function(args, res, next) {
     var percentComplete = parseInt(args.body.originalValue.percentComplete);
     var assetID = parseInt(args.asset_id.value);
     var elementID = parseInt(args.element_id.value);
-    var queryString = 'update queue set status=$1, percentComplete=$2, assetID=$3 where priorityNum=$4' 
+    var queryString = 'update queue set status=$1, percentComplete=$2, assetID=$3 where id=$4' 
     db.any(queryString, [status, percentComplete, assetID, elementID])
         .then(function (data) {
             //ToDo should this method return anything?

@@ -732,11 +732,31 @@ paths:
         503:
           description: "Service Unavailable"
       x-swagger-router-controller: "Default"
-  /queue/availableElements:
+  /queue/availableElements/{location}/{dimension1}/{dimension2}/{dimension3}:
     get:
       description: "Gets unfinished jobs from the queue table"
       operationId: "availableQueueElementsGET"
-      parameters: []
+      parameters:
+        - name: "location"
+          in: "path"
+          description: "location of the job"
+          required: true
+          type: "string"
+        - name: "dimension1"
+          in: "path"
+          description: "dimension1 of the job"
+          required: true
+          type: "string"
+        - name: "dimension2"
+          in: "path"
+          description: "dimension2 of the job"
+          required: true
+          type: "string"
+        - name: "dimension3"
+          in: "path"
+          description: "dimension3 of the job"
+          required: true
+          type: "string"
       responses:
         200:
           description: "Successful response"
@@ -866,18 +886,20 @@ definitions:
         type: "string"
       owner_id:
         type: "string"
-      user_id:
-        type: "string"
       created_at:
         type: "string"
         format: "dateTime"
-      description:
+      am_description:
         type: "string"
-      walletAddress: 
+      location_description:
         type: "string"
-      coinsRemaining:
+      dimension1:
         type: "string"
-      tokensRemaining:
+      dimension2:
+        type: "string"
+      dimension3:
+        type: "string"
+      location:
         type: "string"
   state:
     type: "object"
@@ -994,4 +1016,15 @@ definitions:
       id:
         type: string
       txid:
+        type: string
+  queueQueryConditions:
+    type: object
+    properties:
+      location:
+        type: string
+      dimension1:
+        type: string
+      dimension2:
+        type: string
+      dimension3:
         type: string
