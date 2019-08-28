@@ -1,5 +1,4 @@
 FROM alpine:3.7
-MAINTAINER Stephanie Kuhne <stephanie.kuhne@ge.com>
 
 RUN set -ex \
 	&& apk add --no-cache \

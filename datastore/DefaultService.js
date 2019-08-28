@@ -3,7 +3,7 @@
 var log4js = require('log4js');
 var logger = log4js.getLogger('DEPLOY');
 const uuidV4 = require('uuid/v4');
-//const bitcoinClient = require('bitcoin-core');
+const bitcoinClient = require('bitcoin-core');
 //const userWalletLocation = process.env.userIP;
 const asset1WalletLocation = process.env.asset1;
 const asset2WalletLocation = process.env.asset2;
@@ -301,16 +301,16 @@ exports.assetAsset_idGET = function (args, res, next) {
 //   "id" : "aeiou"
 // };
     var assetID = parseInt(args.asset_id.value);
-    var queryString = 'select a.id id, a.uuid assetUUID, a.assetName assetName, u.firstName userFirstName, u.lastName userLastName, u.firstName ownerFirstName,  u.lastName ownerLastName, a.created_at created_at, a.am_description description, a.location_description locationDescription, a.dimension1 d1, a.dimension2 d2, a.dimension3 d3, a.location loc from assets a, users u where a.id = $1 and a.owner_id = u.id';
+    var queryString = 'select a.id id, a.uuid assetUUID, a.assetName assetName, u.firstName userFirstName, u.lastName userLastName, u.firstName ownerFirstName,  u.lastName ownerLastName, a.created_at created_at, a.am_description description, a.location_description locationDescription, a.wallet walletaddress, a.dimension1 d1, a.dimension2 d2, a.dimension3 d3, a.location loc from assets a, users u where a.id = $1 and a.owner_id = u.id';
     console.log('From assetAsset_idGET.  queryString: ' + queryString);
     db.any(queryString, assetID)
         .then(function (data) {
 
-		//const assetWallet = data[Object.keys(data)[0]].walletaddress;  // get location of asset's wallet      
+		const assetWallet = data[Object.keys(data)[0]].walletaddress;  // get location of asset's wallet      
 		//const Client = new bitcoinClient({ username: walletUserName, password: walletPassword, host: assetWallet });
-		//const Client = new bitcoinClient({ username: walletUserName, password: walletPassword, host: walletHost, network:'testnet',port:walletPort});
-		//console.log("From assetAsset_idGET. username:" + walletUserName + ";password:" + walletPassword + ";host:" + "127.0.0.1");
-        /*
+		const Client = new bitcoinClient({ username: walletUserName, password: walletPassword, host: walletHost, network:'testnet',port:walletPort});
+		console.log("From assetAsset_idGET. username:" + walletUserName + ";password:" + walletPassword + ";host:" + "127.0.0.1");
+        
         Client.getBalance(function(err, balance) {
 			if (err) {
 			    return console.error(err);
@@ -324,10 +324,10 @@ exports.assetAsset_idGET = function (args, res, next) {
 			res.setHeader('Content-Type', 'application/json');
 			res.end(JSON.stringify(data[Object.keys(data)[0]] || {}, null, 2));
             });
-            */
+            
 
-		res.setHeader('Content-Type', 'application/json');
-		res.end(JSON.stringify(data[Object.keys(data)[0]] || {}, null, 2));
+		//res.setHeader('Content-Type', 'application/json');
+		//res.end(JSON.stringify(data[Object.keys(data)[0]] || {}, null, 2));
         })
         .catch(function (err) {
             return next(err);
@@ -1351,10 +1351,10 @@ exports.availableQueueElementsGET = function (args, res, next) {
 exports.queueAssetChangeElementStatusPOST = function(args, res, next) {
     var status = args.body.originalValue.status;
     var percentComplete = parseInt(args.body.originalValue.percentComplete);
-    var assetID = parseInt(args.asset_id.value);
+    //var assetID = parseInt(args.asset_id.value);
     var elementID = parseInt(args.element_id.value);
-    var queryString = 'update queue set status=$1, percentComplete=$2, assetID=$3 where id=$4' 
-    db.any(queryString, [status, percentComplete, assetID, elementID])
+    var queryString = 'update queue set status=$1, percentComplete=$2 where id=$3' 
+    db.any(queryString, [status, percentComplete, elementID])
         .then(function (data) {
             //ToDo should this method return anything?
             res.setHeader('Content-Type', 'application/json');
@@ -1368,7 +1368,7 @@ exports.queueAssetChangeElementStatusPOST = function(args, res, next) {
 exports.queueElementStatusAsset_idGET = function (args, res, next) {
     var assetID = parseInt(args.asset_id.value);
     var queryString = 'select q.status status, q.percentComplete percentComplete ' + 
-        'from queue q where q.assetID = $1 order by q.priorityNum';
+        'from queue q where q.assetID = $1 order by q.id';
     db.any(queryString, assetID)
         .then(function (data) {
             res.setHeader('Content-Type', 'application/json');

@@ -776,7 +776,7 @@ paths:
         503:
           description: "Service Unavailable"
       x-swagger-router-controller: "Default"
-  /queue/asset/{asset_id}/changeElementStatus/{element_id}:
+  /queue/changeElementStatus/{element_id}:
     post:
       description: "change queue element status"
       operationId: "queueAssetChangeElementStatusPOST"
@@ -787,11 +787,6 @@ paths:
           required: true
           schema:
             $ref: "#/definitions/queueElementStatus"
-        - name: "asset_id"
-          in: "path"
-          description: "the asset unique id"
-          required: true
-          type: "string"
         - name: "element_id"
           in: "path"
           description: "the queue element unique id"
@@ -890,6 +885,8 @@ definitions:
         type: "string"
         format: "dateTime"
       am_description:
+        type: "string"
+      wallet:
         type: "string"
       location_description:
         type: "string"

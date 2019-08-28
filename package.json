@@ -21,8 +21,6 @@
     "express": "^4.14.1",
     "pg-promise": "^5",
     "bluebird": "^3",
-    "fabric-client": "^0.1.0",
-    "fabric-ca-client": "^0.1.0",
     "uuid": "^3.0.1",
     "deasync": "^0.1.9",
     "bitcoin-core": "^1.2.0"
