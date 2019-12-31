@@ -1,0 +1,5 @@
+node_modules/
+PasswordMrg.txt
+.DS_Store
+/datastore/bitcoin-coreWalletPass.txt
+/tmp
