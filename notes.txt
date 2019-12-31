@@ -1,55 +1,21 @@
-1. Use make to start up the container with rest services.
+1. For development purpose, the node server can be start from the local machine instead of within docker container.  Use ./serve.sh to do that.
 
-2.  Use /queue/addElement to add an element (printing item) to the database.
+But on Mac machine, hyperledge only support node 6 not 7/8.  Use 5. SetupNode.sh to change that.
 
-3. Yoshi's testing web site: http://ec2-54-191-60-251.us-west-2.compute.amazonaws.com:18321/magento2/
+Plese refer to:
+https://stackoverflow.com/questions/45224415/bna-archive-file-creation-fails-on-mac
 
-4. Example:
+One way to do is to clean up the code completely to delete hyperledger.
 
-{
-  "name": "GE Bracket",
-  "price": "150",
-  "sku": "1_bracket"
-}
+To build in development environment:
+npm install -g n
+sudo n 6.10.0
+...
+npm install -g composer-cli (might be some)
 
-/users/{owner_id}:
-1
-{
-  "userName": "Yoshi",
-  "firstName": "Yoshi",
-  "lastName": "Nishida",
-  "email": "Yoshi@ge.com",
-  "companyName": "GE"
-}
+./serve.sh
 
-/users/{owner_id}:
-2
-{
-  "userName": "Dan",
-  "firstName": "Dan",
-  "lastName": "Yang",
-  "email": "yangd@ge.com",
-  "companyName": "GE"
-}
+After that, you can use "node index.js"
 
-
-//Add an asset
-{
-  "id": "1",
-  "assetUUID": "83672765-0dfe-44c9-bcf1-e6710edb5ae6",
-  "assetName": "Printer1",
-  "owner_id": "1",
-  "user_id": "1",
-  "created_at": "20190705",
-  "description": "Local mimic printer",
-  "walletAddress": "micNM88SZmhrpTGdgz26Gg53pdnB1eD9sm",
-  "coinsRemaining": "25",
-  "tokensRemaining": "1"
-}
-
-5. To start the database, go to the datastore to run the script.
-
-6. Bitcoin core address Ben: n4c51TxKkh2DNm8qFJA8wXsSE9PxXXW3ya
-Address on Mac: micNM88SZmhrpTGdgz26Gg53pdnB1eD9sm
-
-7. Controlders in ./datastore/DefaultServices.js is used
+2. Find dependency: npm list
+clean up packages not in package.json: npm prune
